@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="index.css">
+    <!--Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville&display=swap" rel="stylesheet">
+
+    <script src="jquery.js"></script>
+    <script src="data_generator.js"></script>
+
+  </head>
+  <body>
+      <div class="container">
+         <h1 class="heading">&#128522 &#128514My Tweet page&#128514 &#128522</h1>
+         <div class="tweets">
+            <section class="mainList">
+              </section>
+            <section class="newEnteredTweet">
+              </section>
+         </div>
+
+    <script>
+
+      $(document).ready(function(){
+        var $body = $('.tweets');
+        var index = streams.home.length - 1;
+        while(index >= 0)
+        {
+          var tweet = streams.home[index];
+
+          var $tweet = $('<div class="tweet"></div>');
+          var $user=$('<p class=user></p>');
+          var $message=$('<p class=message></p>');
+          var $createdDate=$('<span class=newDate></span>');
+
+          $tweet.appendTo('.mainList')
+          $user.addClass(tweet.user).attr('data-user',tweet.user).text('@'+tweet.user+' ').appendTo($tweet);
+          $message.text(tweet.message).appendTo($tweet);
+          $createdDate.text(tweet.created_at.toUTCString()).appendTo($tweet);
+
+          index -= 1;
+        }
+        // create a button when pressed new random tweet created.
+         var $button= $('<input class="btn new" type=button value="Create new Tweet">');
+         $button.appendTo($body);
+         $button.on('click',function(){
+            generateRandomTweet();
+            var newTweet=streams.home.pop();
+
+            var $newTweet=$('<div class="tweet"></div>');
+            var $newUser=$('<p class=user></p>');
+            var $newMessage=$('<p class=message></p>');
+            var $newCreatedDate=$('<span class=newDate></span>');
+
+            $newUser.addClass(newTweet.user).attr('data-user',newTweet.user).text('@'+newTweet.user+' ') .appendTo($newTweet);
+            $newMessage.text(newTweet.message).appendTo($newTweet);
+            $newCreatedDate.text(newTweet.created_at.toUTCString()).appendTo($newTweet);
+            $newTweet.appendTo('.newEnteredTweet');
+
+        });
+
+    //Allow the user to click on a username to see that user's timeline.
+    //step 1- heighlight the user name .
+
+    $('.tweets').on('mouseover mouseleave','.tweet .user', function(){
+                 $(this).toggleClass("highlight");
+    });
+
+
+    //step 2- grab the clicked user name and find out all tweet of that user.
+
+    $('.tweets').on('click','.tweet .user',function(event){
+      event.preventDefault();
+                  //preventDefault() tells the user agent that if the event does not get explicitly                              // handled,its default action should not be taken as it normally would be.
+      var user = $(this).data('user');
+      //console.log(user);
+      $('.timeline').remove();
+      var $timeline=$('<h1 class=timeline> You visited '+ user +"\'s timeline</h1>");
+          $('.timeline').remove();
+          // var $timeline = $('<h1 class=timeline>'+ user +'\'s Timeline</h1>');
+          //     console.log($timeline);
+
+      $timeline.prependTo($body);
+      $('.new').hide();
+      // $backbutton.show(400);
+
+      $('.tweet').not("div:contains('" + user + "')").hide(500);
+      $("div:contains('"+user+'")').show(500);
+
+      $backbutton.show();
+    });
+
+    //step 3- create back button which will direct to home page.
+
+    $backbutton=$('<input class="btn home" type=button value="Go back">');
+    $backbutton.on('click',function(event){
+         event.preventDefault();
+          $('.timeline').remove();
+          $('div').show(500);
+          $('.new').show(500);
+          $backbutton.hide(100);
+      });
+       $backbutton.insertAfter($button).hide();
+  });
+</script>
+</div>
+  </body>
+
+</html>
